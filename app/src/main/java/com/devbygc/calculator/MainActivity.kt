@@ -2,11 +2,12 @@ package com.devbygc.calculator
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import kotlinx.android.synthetic.main.activity_main.*
 
-//private val TAG: String = "MainActivity"
+private val TAG: String = "MainActivity"
 private const val STATE_PENDING_OPERATION = "PendingOperation"
 private const val STATE_OPERAND1 = "Operand1"
 private const val STATE_OPERAND1_STORED = "Operand1_Stored"
@@ -41,6 +42,7 @@ class MainActivity : AppCompatActivity() {
         val opListener = View.OnClickListener { thisView ->
             val op = (thisView as Button).text.toString()
             try {
+                Log.d(TAG, "newNumber = ${newNumber.text}")
                 val value = newNumber.text.toString().toDouble()
                 performOperation(value, op)
             } catch (e: NumberFormatException) {
@@ -57,13 +59,28 @@ class MainActivity : AppCompatActivity() {
         buttonMinus.setOnClickListener(opListener)
         buttonPlus.setOnClickListener(opListener)
 
+        buttonNeg.setOnClickListener({ thisView ->
+            val value = newNumber.text.toString()
+            if (value.isEmpty()) {
+                newNumber.setText("-")
+            } else {
+                try {
+                    var doubleValue = value.toDouble()
+                    doubleValue *= -1
+                    newNumber.setText(doubleValue.toString())
+                } catch (e: NumberFormatException) {
+                    // newNumber was "-" or ".", so clear it
+                    newNumber.setText("")
+                }
+            }
+        })
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         // Note it is risky to override this method with "Bundle" instead of "Bundle?"
         super.onRestoreInstanceState(savedInstanceState)
         operand1 = if (savedInstanceState.getBoolean(STATE_OPERAND1_STORED, false)) {
-            savedInstanceState?.getDouble(STATE_OPERAND1)
+            savedInstanceState.getDouble(STATE_OPERAND1)
         } else {
             null
         }
