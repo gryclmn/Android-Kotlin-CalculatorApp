@@ -42,7 +42,9 @@ class MainActivity : AppCompatActivity() {
         val opListener = View.OnClickListener { thisView ->
             val op = (thisView as Button).text.toString()
             try {
-                Log.d(TAG, "newNumber = ${newNumber.text}")
+                Log.d(TAG, "newNumber (raw) = ${newNumber.text}")
+                Log.d(TAG, "newNumber (toString) = ${newNumber.text.toString()}")
+                Log.d(TAG, "newNumber (toDouble) = ${newNumber.text.toString().toDouble()}")
                 val value = newNumber.text.toString().toDouble()
                 performOperation(value, op)
             } catch (e: NumberFormatException) {
@@ -73,6 +75,12 @@ class MainActivity : AppCompatActivity() {
                     newNumber.setText("")
                 }
             }
+        })
+
+        buttonClear.setOnClickListener({ thisView ->
+            operand1 = 0.0
+            result.setText("")
+            newNumber.setText("")
         })
     }
 
